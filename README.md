@@ -11,7 +11,7 @@ The repro has the steps to setup a Nebuis soperators GPU cluster, run two Infere
 
 1. Provision Nebuis soperator cluster by following the steps [here](https://github.com/nebius/nebius-solutions-library/tree/main/soperator)
    - The [demotf folder](https://github.com/heyram74/nebuis-sopertors-inferencex-benchmark/tree/main/demotf) has the copy of the soperator terraform used for this demo.
-   - It creates 2 node H200 GPU cluster with 3.5TB high speed nfs share
+   - It creates 2 node H200 GPU cluster with 3.6TB high speed nfs share
   
 2. Verify the cluster health by running nccl tests from /opt/slurm-test/quickcheck. Verify the all-reduce-perf BW is matching the Nvidia published numbers.
    - The [nccl_results](https://github.com/heyram74/nebuis-sopertors-inferencex-benchmark/tree/main/results/nccl_results) folder has all the resuts from the demo cluster
@@ -28,15 +28,16 @@ The repro has the steps to setup a Nebuis soperators GPU cluster, run two Infere
     ~~~
   
   The high speed nfs should show up as one file mount as /home. This will be used to store all the artifacts of this experiments. Below is the folder structure used for this experiment.
+    
     ~~~
-    /home/InferenceX
-    /home/cache
-    /home/containers
-    /home/models
-    /home/results
-    /home/scripts
+      /home/InferenceX
+      /home/cache
+      /home/containers
+      /home/models
+      /home/results
+      /home/scripts
     ~~~
-
+    
 4. Clone [InferenceX](https://github.com/SemiAnalysisAI/InferenceX.git) into /home/InferenceX
   
 5. Download the models to /home/models folder
