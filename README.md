@@ -1,23 +1,54 @@
-# nebius_sopertors_inferencex_benchmark
+# Goal
+
+The goal of this demo is to experiment the below
+   * Provision the Nebuis soperators cluster
+   * Benchmark atleast two InferenceX benchmarks
+   * Analyze the observed benchmark results in comparision with publiched InferenceX results
+
+# Experiment steps
+
 The repro has the steps to setup a Nebuis soperators GPU cluster, run two InferenceX benchmarks and process the benchmark results
 
 1. Provision Nebuis soperator cluster by following the steps [here](https://github.com/nebius/nebius-solutions-library/tree/main/soperator)
+   - The [demotf folder](https://github.com/heyram74/nebuis-sopertors-inferencex-benchmark/tree/main/demotf) has the copy of the soperator terraform used for this demo.
+   - It creates 2 node H200 GPU cluster with 3.5TB high speed nfs share
   
-3. Verify the cluster health by running nccl tests from /opt/slurm-test/quickcheck. Verify the all-reduce-perf BW is matching the Nvidia published numbers.
+2. Verify the cluster health by running nccl tests from /opt/slurm-test/quickcheck. Verify the all-reduce-perf BW is matching the Nvidia published numbers.
+   - The [nccl_results](https://github.com/heyram74/nebuis-sopertors-inferencex-benchmark/tree/main/results/nccl_results) folder has all the resuts from the demo cluster
   
-4. SSH to the login node and clone [InferenceX](https://github.com/SemiAnalysisAI/InferenceX.git) into /home/InferenceX
+3. SSH to the login node and verify the file system and its allocated size. The high speed nfs should show up as one file mount as /home. This will be used to store all the artifacts of this experiments.
+
+4. clone [InferenceX](https://github.com/SemiAnalysisAI/InferenceX.git) into /home/InferenceX
   
-5. Down the models to /home/models folder
+5. Download the models to /home/models folder
+
+   ~~~
    hf download openai/gpt-oss-120b --local-dir /home/models/openai--gpt-oss-120b
+
    hf download deepseek-ai/DeepSeek-R1-0528 --local-dir /home/models/deepseek-r1
+   ~~~
   
 6. Clone [this repo's script](https://github.com/heyram74/nebius_sopertors_inferencex_benchmark/tree/main/scripts) folder into into /home/scripts
   
-7. Edit the scripts as required for the cluster specific fileshare information  
+7. Edit the scripts as required for the cluster specific fileshare and mount. For reference below is the    
   
 8. Run the gpt_oss benchmark test with "SBATCH /home/scripts/run_gpt.sh" with sweep of required TP and CONC values in the script
   
 9. Run the deepseekr1 benchmark test with "SBATCH /home/scripts/run_deepseekr1.sh" with sweep of required TP and CONC values in the script
    
 10. Process the results files in /home/results by running
-   python /home/script/analyze_benchmark.py --results-dir=/home/results/gpt_oss_sweep1
+   ~~~
+   python /home/script/analyze_benchmark.py --results-dir=/home/results/gptoss_h200_vllm22.0_sweep1
+
+   python /home/script/analyze_benchmark.py --results-dir=/home/results/deepseekr1_h200_sglang5.12_sweep1
+   ~~~
+   
+   This creates the below in the given results-dir 
+      * summary.txt with a metrics table
+      * chart for throughout vs interactivity
+      * charts for throughout vs latency
+
+# Results Analysis
+
+InferenceX publishes the benchmark results on continous frequency at https://inferencex.semianalysis.com/inference. For this analysis purpose, took the snapshot of the two benchmarks and placed it under the results folder
+

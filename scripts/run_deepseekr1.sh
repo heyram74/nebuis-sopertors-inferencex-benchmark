@@ -3,7 +3,7 @@
 #
 # Usage:
 #   1. Edit the "Configure these" section below.
-#   2. sbatch run_deepseek.sh
+#   2. sbatch run_deepseekr1.sh
 #
 # Prerequisites:
 #   - Model weights pre-staged (run download_model.sh first)
@@ -33,9 +33,6 @@ MODEL="/home/models/deepseek-r1"
 # Absolute path to the InferenceX repo clone on shared storage.
 INFERENCEX_DIR="/home/InferenceX"
 
-# Where result JSONs will be written (must be writable inside the container).
-#WORKSPACE="/home/results/gptoss_h200"
-
 # sglang Docker image. Pin to the same image used in InferenceX CI for H200.
 # Check runners/launch_h200-*.sh in the repo for the latest pinned tag.
 IMAGE="lmsysorg/sglang:v0.5.12-cu130"
@@ -44,6 +41,9 @@ IMAGE="lmsysorg/sglang:v0.5.12-cu130"
 # Avoids re-pulling on every run.
 SQUASH_DIR="/home/containers"
 SQUASH_FILE="${SQUASH_DIR}/sglang.v0.5.12-cu130.sqsh"
+
+# Path where the sglang will store the cache
+CACHE_DIR="/home/cache"
 
 # ── Benchmark parameters ──────────────────────────────────────────────────────
 export PORT=8000
@@ -58,14 +58,14 @@ export RUN_EVAL=false          # set true to also run lm-eval accuracy checks
 
 # Where result JSONs will be written (must be writable inside the container).
 WORKSPACE="/home/results/deepseekr1_h200_sglang5.12_sweep1/$RESULT_FILENAME"
-CACHE_DIR="/home/.cahce"
+
 
 echo "==> Job $SLURM_JOB_ID on node $SLURMD_NODENAME"
 echo "    MODEL    : $MODEL"
 echo "    TP       : $TP  CONC: $CONC  ISL: $ISL  OSL: $OSL"
 echo "    WORKSPACE: $WORKSPACE"
 
-mkdir -p "$WORKSPACE" "$SQUASH_DIR"
+mkdir -p "$WORKSPACE" "$SQUASH_DIR" "$CACHE_DIR"
 
 # ── Step 1: Pull the container image (only if not cached) ────────────────────
 if [[ ! -f "$SQUASH_FILE" ]]; then
@@ -111,8 +111,8 @@ srun --exclusive \
          --mount "${INFERENCEX_DIR}:/inferencex" \
          --mount "${MODEL}:${MODEL}" \
          --mount "${WORKSPACE}:/workspace" \
-	 --mount "/home/cache/deep_gemm:/cache/deep_gemm" \
-	 --mount "/home/cache/triton:/cache/triton" \
+         --mount "${CACHE_DIR}/deep_gemm:/cache/deep_gemm" \
+         --mount "${CACHE_DIR}/triton:/cache/triton" \
          --rw \
          "$SQUASH_FILE"
 
