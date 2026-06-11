@@ -2,7 +2,7 @@
 
 The goal of this demo is to experiment the below
    * Provision the Nebuis soperators cluster
-   * Benchmark atleast two InferenceX benchmarks
+   * Benchmark atleast two InferenceX benchmarks for difference configurations for throughput and latency
    * Analyze the observed benchmark results in comparision with publiched InferenceX results
 
 # Experiment steps
