@@ -26,21 +26,20 @@ The repro has the steps to setup a Nebuis soperators GPU cluster, run two Infere
     ....
     jail-submount-data                                                                 512G     0  512G   0% /mnt/data
     ~~~
-  
-  The high speed nfs should show up as one file mount as /home. This will be used to store all the artifacts of this experiments. Below is the folder structure used for this experiment.
-    
+
+    The high speed nfs should show up as one file mount as /home. This will be used to store all the artifacts of this experiments. Below is the folder structure used for this experiment.
     ~~~
-      /home/InferenceX
-      /home/cache
-      /home/containers
-      /home/models
-      /home/results
-      /home/scripts
+        /home/InferenceX
+        /home/cache
+        /home/containers
+        /home/models
+        /home/results
+        /home/scripts
     ~~~
     
-4. Clone [InferenceX](https://github.com/SemiAnalysisAI/InferenceX.git) into /home/InferenceX
+5. Clone [InferenceX](https://github.com/SemiAnalysisAI/InferenceX.git) into /home/InferenceX
   
-5. Download the models to /home/models folder
+6. Download the models to /home/models folder
 
    ~~~
    hf download openai/gpt-oss-120b --local-dir /home/models/openai--gpt-oss-120b
@@ -48,15 +47,15 @@ The repro has the steps to setup a Nebuis soperators GPU cluster, run two Infere
    hf download deepseek-ai/DeepSeek-R1-0528 --local-dir /home/models/deepseek-r1
    ~~~
   
-6. Clone [this repo's script](https://github.com/heyram74/nebius_sopertors_inferencex_benchmark/tree/main/scripts) folder into into /home/scripts
+7. Clone [this repo's script](https://github.com/heyram74/nebius_sopertors_inferencex_benchmark/tree/main/scripts) folder into into /home/scripts
   
-7. Edit the scripts as required for the cluster specific fileshare and mount. For reference below is the    
+8. Edit the scripts as required for the cluster specific fileshare and mount. For reference below is the    
   
-8. Run the gpt_oss benchmark test with "SBATCH /home/scripts/run_gpt.sh" with sweep of required TP and CONC values in the script
+9. Run the gpt_oss benchmark test with "SBATCH /home/scripts/run_gpt.sh" with sweep of required TP and CONC values in the script
   
-9. Run the deepseekr1 benchmark test with "SBATCH /home/scripts/run_deepseekr1.sh" with sweep of required TP and CONC values in the script
+10. Run the deepseekr1 benchmark test with "SBATCH /home/scripts/run_deepseekr1.sh" with sweep of required TP and CONC values in the script
    
-10. Process the results files in /home/results by running
+11. Process the results files in /home/results by running
    ~~~
    python /home/script/analyze_benchmark.py --results-dir=/home/results/gptoss_h200_vllm22.0_sweep1
 
